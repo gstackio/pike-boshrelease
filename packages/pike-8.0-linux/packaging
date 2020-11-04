@@ -1,0 +1,30 @@
+set -e
+
+function main()
+{
+  _workaround_missing_libraries
+  _compile_install
+}
+
+function _workaround_missing_libraries() {
+  # NOTE: We use the '-o APT::Sandbox::User=root' option as a workaround for
+  # this error: "Could not execute 'apt-key' to verify signature".
+  #
+  # See: https://github.com/cloudfoundry/bosh-linux-stemcell-builder/issues/39#issuecomment-418136627
+  apt-get --option APT::Sandbox::User="root" update
+
+  apt-get --assume-yes install libgmp10 nettle-dev
+
+  # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz
+}
+
+function _compile_install(){
+  tar xzf Pike-v8.0.702.tar.gz
+  pushd Pike-v8.0.702
+  make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
+  make install
+  popd
+}
+
+main "$@"
+

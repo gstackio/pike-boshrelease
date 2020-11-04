@@ -1,0 +1,30 @@
+name: pike-test-deployment
+
+stemcells:
+- alias: xenial
+  os: ubuntu-xenial
+  version: latest
+
+releases:
+- name: pike
+  version: create
+  url: file://.
+
+instance_groups:
+- name: empty
+  azs: [ z1 ]
+  instances: 1
+  jobs:
+  - name: pike-7.8-test
+    release: pike
+  - name: pike-8.0-test
+    release: pike
+  vm_type: default
+  stemcell: xenial
+  networks: [ name: default ]
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-5000
+  update_watch_time: 1000-5000

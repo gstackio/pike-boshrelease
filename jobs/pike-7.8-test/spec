@@ -1,0 +1,9 @@
+---
+name: pike-7.8-test
+
+templates:
+  bin/run: bin/run
+
+packages: [ pike-7.8-linux ]
+
+properties: {}
