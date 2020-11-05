@@ -13,7 +13,7 @@ function _workaround_missing_libraries() {
   # See: https://github.com/cloudfoundry/bosh-linux-stemcell-builder/issues/39#issuecomment-418136627
   apt-get --option APT::Sandbox::User="root" update
 
-  apt-get --assume-yes install libgmp10 nettle-dev
+  apt-get --assume-yes install libgmp10 nettle-dev libpcre3-dev
 
   # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz
 }
