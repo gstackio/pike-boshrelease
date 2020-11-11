@@ -1,5 +1,7 @@
 set -e
 
+PIKE_VERSION="8.0.702"
+
 function main()
 {
   _workaround_missing_libraries
@@ -18,9 +20,10 @@ function _workaround_missing_libraries() {
   # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz
 }
 
+# Warning : pushd / popd aren't POSIX
 function _compile_install(){
-  tar xzf Pike-v8.0.702.tar.gz
-  pushd Pike-v8.0.702
+  tar xzf Pike-v${PIKE_VERSION}.tar.gz
+  pushd Pike-v${PIKE_VERSION}
   make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
   make install
   popd

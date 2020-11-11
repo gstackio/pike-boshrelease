@@ -1,5 +1,7 @@
 set -e
 
+PIKE_VERSION="7.8.866"
+
 function main()
 {
   _workaround_missing_libraries
@@ -16,9 +18,10 @@ function _workaround_missing_libraries() {
   apt-get --assume-yes install libgmp10 nettle-dev libpcre3-dev
 }
 
+# Warning : pushd / popd aren't POSIX
 function _compile_install(){
-  tar xzf Pike-v7.8.866.tar.gz
-  pushd Pike-v7.8.866
+  tar xzf Pike-v${PIKE_VERSION}.tar.gz
+  pushd Pike-v${PIKE_VERSION}
   make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
   make install
   popd
