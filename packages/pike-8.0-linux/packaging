@@ -16,17 +16,17 @@ function _workaround_missing_libraries() {
   apt-get --option APT::Sandbox::User="root" update
 
   apt-get --assume-yes install libgmp10 nettle-dev libpcre3-dev
-
-  # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz
 }
 
 # Warning : pushd / popd aren't POSIX
 function _compile_install(){
   tar xzf Pike-v${PIKE_VERSION}.tar.gz
   pushd Pike-v${PIKE_VERSION}
-  make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
+  make CONFIGUREARGS="--prefix=${BOSH_INSTALL_TARGET}"
   make install
   popd
+  mkdir "${BOSH_INSTALL_TARGET}/bosh"
+  cp -va runtime-8.0-linux.env "${BOSH_INSTALL_TARGET}/bosh/runtime.env"
 }
 
 main "$@"
