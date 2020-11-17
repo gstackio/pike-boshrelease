@@ -3,4 +3,4 @@ name: pike-7.8-linux
 
 dependencies: []
 
-files: [ Pike-v7.8.866.tar.gz ]
+files: [ Pike-v7.8.*.tar.gz ]

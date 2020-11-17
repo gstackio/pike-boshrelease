@@ -4,5 +4,5 @@ name: pike-8.0-linux
 dependencies: []
 
 files:
-- Pike-v8.0.702.tar.gz # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz 
+- Pike-v8.0.*.tar.gz # https://pike.lysator.liu.se/pub/pike/latest-stable/Pike-v8.0.702.tar.gz
 - runtime-8.0-linux.env
