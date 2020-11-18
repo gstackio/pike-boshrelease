@@ -1,0 +1,41 @@
+---
+meta:
+  name:    pike
+  target:  gk-plat-devs
+  url:     https://ci.gstack.io
+  team:    gk-plat-devs
+
+  test-errands: pike-7.8-test pike-8.0-test
+
+  initial_version: 1.0.0
+
+  manifest:
+    directory: manifests
+
+  git:
+    email:  ((git-commit-email))
+    name:   ((git-commit-name))
+
+  image:
+    name: gstack/gk-ops
+
+  aws:
+    bucket:      (( grab meta.pipeline ))
+    region_name: eu-west-3
+    access_key:  ((aws-access-key))
+    secret_key:  ((aws-secret-key))
+
+  github:
+    owner: gstackio
+    repo:   (( grab meta.pipeline ))
+    branch: master
+    private_key:  ((github-private-key))
+    access_token: ((github-access-token))
+
+  slack:
+    webhook:       ((slack-webhook))
+    username:      ((slack-username))
+    icon:          ((slack-icon-url))
+    channel:       (( concat "#" meta.name "-boshrelease" ))
+    blob_success:  '(( concat ": New version of  was detected, and updated in master. <" meta.url "/teams//pipelines/| Cut a new release?>" ))'
+    blob_failure:  '(( concat ": :airplane_arriving: <" meta.url "/teams//pipelines//jobs//builds/| Failed to update the blob for >" ))'
