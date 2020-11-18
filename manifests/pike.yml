@@ -4,6 +4,9 @@ stemcells:
 - alias: xenial
   os: ubuntu-xenial
   version: latest
+- alias: bionic
+  os: ubuntu-bionic
+  version: latest
 
 releases:
 - name: pike
@@ -11,18 +14,27 @@ releases:
   url: file://.
 
 instance_groups:
-- name: empty
+- name: xenial
   azs: [ z1 ]
   instances: 1
   jobs:
-  - name: pike-7.6-test
-    release: pike
   - name: pike-7.8-test
     release: pike
   - name: pike-8.0-test
     release: pike
   vm_type: default
   stemcell: xenial
+  networks: [ name: default ]
+- name: bionic
+  azs: [ z1 ]
+  instances: 1
+  jobs:
+  - name: pike-7.8-test
+    release: pike
+  - name: pike-8.0-test
+    release: pike
+  vm_type: default
+  stemcell: bionic
   networks: [ name: default ]
 
 update:
