@@ -1,8 +1,0 @@
----
-name: pike-7.6-test
-
-templates: { bin/run: bin/run }
-
-packages: [ pike-7.6-linux ]
-
-properties: {}

@@ -1,7 +1,0 @@
----
-name: pike-7.6-linux
-
-dependencies: []
-
-files:
-- Pike-v7.6.*.tar.gz # https://pike.lysator.liu.se/pub/pike/all/7.6.132/Pike-v7.6.132.tar.gz
