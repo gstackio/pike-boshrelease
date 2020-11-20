@@ -1,6 +1,6 @@
 # Pike BOSH Release
 
-This is a [BOSH](https://bohs.io/) release for [Pike](https://pike.lysator.liu.se) programing language and interpretor.
+This is a [BOSH](https://bosh.io/) release for [Pike](https://pike.lysator.liu.se) programing language and interpretor.
 
 ## What is BOSH ?
 
