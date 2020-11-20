@@ -1,0 +1,28 @@
+name: pike-latest-linux
+
+stemcells:
+- alias: bionic
+  os: ubuntu-bionic
+  version: latest
+
+releases:
+- name: pike
+  version: create
+  url: file://.
+
+instance_groups:
+- name: bionic
+  azs: [ z1 ]
+  instances: 1
+  jobs:
+  - name: pike-8.0-test
+    release: pike
+  vm_type: default
+  stemcell: bionic
+  networks: [ name: default ]
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  canary_watch_time: 1000-5000
+  update_watch_time: 1000-5000
