@@ -1,0 +1,8 @@
+---
+
+- path: /releases/name=pike
+  type: replace
+  value:
+    name: pike
+    version: create
+    url: file://.
