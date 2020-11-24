@@ -10,6 +10,7 @@ meta:
   initial_version: 1.0.0
 
   manifest:
+    path: manifests/pike-full-deploy.yml
     directory: manifests
 
   git:
