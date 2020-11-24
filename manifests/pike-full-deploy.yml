@@ -10,8 +10,7 @@ stemcells:
 
 releases:
 - name: pike
-  version: create
-  url: file://.
+  version: latest
 
 instance_groups:
 - name: xenial
