@@ -77,7 +77,7 @@ if [[ "${PROXY_IP:-X}" != "X" ]] ; then export BOSH_ALL_PROXY=socks5://localhost
 delete_deployment
 
 header "Creating candidate BOSH release..."
-bosh -n reset-release # in case dev_releases/ is in repo accidentally
+#bosh -n reset-release # in case dev_releases/ is in repo accidentally
 
 cat > config/private.yml <<YAML
 ---
