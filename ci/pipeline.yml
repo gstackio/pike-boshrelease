@@ -93,15 +93,12 @@ jobs:
     - name: main
       do:
       - { get: git, trigger: true }
+      - get: gk-ops-image
       - name: testflight
         task: testflight
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - { name: git }
           run:
@@ -135,6 +132,7 @@ jobs:
     - name: main
       do:
       - { get: git-pull-requests, trigger: true, version: every }
+      - get: gk-ops-image
       - name: pending-status
         put: git-pull-requests
         params:
@@ -142,13 +140,9 @@ jobs:
           status: pending
       - name: testflight
         task: testflight
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - { name: git-pull-requests }
           run:
@@ -179,13 +173,9 @@ jobs:
             status: failure
       - name: pr-success-message
         task: pr-success-message
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - { name: git-pull-requests }
           outputs:
@@ -218,14 +208,11 @@ jobs:
         trigger: true
       - get: version
         trigger: true
+      - get: gk-ops-image
       - task: release-notes
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: starkandwayne/concourse
-              tag: latest
           run:
             path: sh
             args:
@@ -264,14 +251,11 @@ jobs:
     - do:
       - { get: git,     trigger: true,  passed: [pre] }
       - { get: version, trigger: false, params: {pre: rc} }
+      - get: gk-ops-image
       - task: release-notes
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
               - { name: git }
           run:
@@ -352,15 +336,12 @@ jobs:
     - do:
       - { get: version, passed: [rc], params: {bump: final} }
       - { get: git,     passed: [rc] }
+      - get: gk-ops-image
       - name: release
         task: release
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - name: version
             - name: git
@@ -426,16 +407,13 @@ jobs:
       - get: git
       - get: github
         trigger: true
+      - get: gk-ops-image
       - get: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
         params: {tarball: false}
       - task: export-release
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - name: git
             - name: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
@@ -469,14 +447,11 @@ jobs:
               params: {tarball: false}
             - get: compiled-release
               passed: [compile-release]
+            - get: gk-ops-image
       - task: use-compiled-releases
+        image: gk-ops-image
         config:
           platform: linux
-          image_resource:
-            type: docker-image
-            source:
-              repository: (( grab meta.image.name ))
-              tag:        (( grab meta.image.tag ))
           inputs:
             - name: git
             - name: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
@@ -575,3 +550,9 @@ resources:
       access_key_id:     (( grab meta.aws.access_key ))
       secret_access_key: (( grab meta.aws.secret_key ))
       regexp:            (( concat "compiled-releases/" meta.name "/.*-(\\d+).tgz" ))
+
+  - name: gk-ops-image
+    type: docker-image
+    source:
+      repository: (( grab meta.image.name ))
+      tag:        (( grab meta.image.tag ))
