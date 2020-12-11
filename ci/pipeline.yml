@@ -30,6 +30,9 @@ meta:
   image:
     name: starkandwayne/concourse
     tag: latest
+    registry:
+      username: (( param "Please set your Docker registry username for your pipeline image" ))
+      password: (( param "Please set your Docker registry password for your pipeline image" ))
 
   aws:
     bucket:     (( grab meta.pipeline ))
@@ -47,7 +50,7 @@ meta:
 
   bosh:
     stemcell:
-      major: 456
+      major: 621
       cpi: aws-xen-hvm
       os: ubuntu-xenial
     target:        ((bosh-lite-environment))
@@ -93,10 +96,10 @@ jobs:
     - name: main
       do:
       - { get: git, trigger: true }
-      - get: gk-ops-image
+      - { get: image }
       - name: testflight
         task: testflight
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -132,7 +135,7 @@ jobs:
     - name: main
       do:
       - { get: git-pull-requests, trigger: true, version: every }
-      - get: gk-ops-image
+      - { get: image }
       - name: pending-status
         put: git-pull-requests
         params:
@@ -140,7 +143,7 @@ jobs:
           status: pending
       - name: testflight
         task: testflight
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -173,7 +176,7 @@ jobs:
             status: failure
       - name: pr-success-message
         task: pr-success-message
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -208,9 +211,9 @@ jobs:
         trigger: true
       - get: version
         trigger: true
-      - get: gk-ops-image
+      - { get: image, passed: [testflight] }
       - task: release-notes
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           run:
@@ -251,9 +254,9 @@ jobs:
     - do:
       - { get: git,     trigger: true,  passed: [pre] }
       - { get: version, trigger: false, params: {pre: rc} }
-      - get: gk-ops-image
+      - { get: image,                   passed: [pre] }
       - task: release-notes
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -336,10 +339,10 @@ jobs:
     - do:
       - { get: version, passed: [rc], params: {bump: final} }
       - { get: git,     passed: [rc] }
-      - get: gk-ops-image
+      - { get: image,   passed: [rc] }
       - name: release
         task: release
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -407,11 +410,11 @@ jobs:
       - get: git
       - get: github
         trigger: true
-      - get: gk-ops-image
       - get: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
         params: {tarball: false}
+      - { get: image }
       - task: export-release
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -429,6 +432,8 @@ jobs:
             BOSH_CA_CERT:         (( grab meta.bosh.cacert ))
             BOSH_CLIENT:          (( grab meta.bosh.username ))
             BOSH_CLIENT_SECRET:   (( grab meta.bosh.password ))
+            STEMCELL_CPI:         (( grab meta.bosh.stemcell.cpi ))
+            STEMCELL_OS:          (( grab meta.bosh.stemcell.os ))
       - put: compiled-release
         params:
           file: (( concat "compiled-release/compiled-releases/" meta.name "/*.tgz" ))
@@ -447,9 +452,9 @@ jobs:
               params: {tarball: false}
             - get: compiled-release
               passed: [compile-release]
-            - get: gk-ops-image
+            - { get: image, passed: [compile-release] }
       - task: use-compiled-releases
-        image: gk-ops-image
+        image: image
         config:
           platform: linux
           inputs:
@@ -464,11 +469,12 @@ jobs:
           run:
             path: git/ci/scripts/use-compiled-releases
           params:
-            REPO_ROOT: git
-            REPO_OUT:  pushme
-            GIT_EMAIL: (( grab meta.git.email ))
-            GIT_NAME:  (( grab meta.git.name ))
-            BRANCH:    (( grab meta.github.branch ))
+            REPO_ROOT:     git
+            REPO_OUT:      pushme
+            GIT_EMAIL:     (( grab meta.git.email ))
+            GIT_NAME:      (( grab meta.git.name ))
+            BRANCH:        (( grab meta.github.branch ))
+            STEMCELL_OS:   (( grab meta.bosh.stemcell.os ))
             MANIFESTS_DIR: (( grab meta.manifest.directory ))
       - name: upload-git
         put: git
@@ -488,6 +494,14 @@ resource_types:
       repository: jtarchie/pr
 
 resources:
+  - name: image
+    type: docker-image
+    source:
+      repository: (( grab meta.image.name ))
+      tag:        (( grab meta.image.tag ))
+      username:   (( grab meta.image.registry.username ))
+      password:   (( grab meta.image.registry.password ))
+
   - name: git
     type: git
     source:
@@ -507,13 +521,13 @@ resources:
   - name: version
     type: semver
     source :
-      driver:            git
+      driver:            s3
+      bucket:            (( grab meta.aws.bucket ))
+      region_name:       (( grab meta.aws.region_name ))
+      key:               version
+      access_key_id:     (( grab meta.aws.access_key ))
+      secret_access_key: (( grab meta.aws.secret_key ))
       initial_version:   (( grab meta.initial_version || "0.0.1" ))
-      uri: git@github.com:gstackio/gk-pipelines-compass.git
-      branch: master
-      file: versions/pike-boshrelease
-      private_key: ((!github-private-key))
-      git_user: "((git-commit-name)) <((git-commit-email))>"
 
   - name: notify
     type: slack-notification
@@ -550,9 +564,3 @@ resources:
       access_key_id:     (( grab meta.aws.access_key ))
       secret_access_key: (( grab meta.aws.secret_key ))
       regexp:            (( concat "compiled-releases/" meta.name "/.*-(\\d+).tgz" ))
-
-  - name: gk-ops-image
-    type: docker-image
-    source:
-      repository: (( grab meta.image.name ))
-      tag:        (( grab meta.image.tag ))
