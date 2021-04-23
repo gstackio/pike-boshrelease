@@ -40,7 +40,7 @@ meta:
     webhook:       ((slack-webhook))
     username:      ((slack-username))
     icon:          ((slack-icon-url))
-    channel:       (( concat "#" meta.name "-boshrelease" ))
+    channel:       (( concat "#" meta.pipeline))
     blob_success:  '(( concat ": New version of  was detected, and updated in master. <" meta.url "/teams//pipelines/| Cut a new release?>" ))'
     blob_failure:  '(( concat ": :airplane_arriving: <" meta.url "/teams//pipelines//jobs//builds/| Failed to update the blob for >" ))'
 
@@ -59,6 +59,6 @@ resources:
       driver:      git
       uri:         git@github.com:gstackio/gk-pipelines-compass.git
       branch:      master
-      file:        versions/pike-boshrelease
+      file:        (( concat "versions/" meta.pipeline ))
       private_key: ((!github-private-key))
       git_user:    "((git-commit-name)) <((git-commit-email))>"
