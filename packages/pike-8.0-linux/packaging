@@ -1,6 +1,6 @@
 set -e
 
-PIKE_VERSION="8.0.702"
+PIKE_VERSION="8.0.1116"
 
 function main()
 {
