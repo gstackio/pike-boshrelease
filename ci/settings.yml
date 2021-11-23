@@ -49,7 +49,6 @@ meta:
 resources:
 
   - name: version
-    type: semver
     source:
       bucket:            (( prune ))
       region_name:       (( prune ))
