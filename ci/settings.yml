@@ -1,6 +1,7 @@
 ---
 meta:
   name:    pike
+  release: Pike BOSH Release
   target:  gk-plat-devs
   url:     https://ci.gstack.io
   team:    gk-plat-devs

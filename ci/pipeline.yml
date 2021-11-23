@@ -50,9 +50,9 @@ meta:
 
   bosh:
     stemcell:
-      major: 621
+      major: 1
       cpi: aws-xen-hvm
-      os: ubuntu-xenial
+      os: ubuntu-bionic
     target:        ((bosh-lite-environment))
     cacert:        ((bosh-lite-ca-cert))
     username:      ((bosh-lite-client))
@@ -94,8 +94,9 @@ jobs:
     serial: true
     plan:
     - do:
-      - { get: git, trigger: true }
-      - { get: image }
+      - in_parallel:
+          - { get: git, trigger: true }
+          - { get: image }
       - task: testflight
         image: image
         config:
@@ -131,12 +132,13 @@ jobs:
     serial: true
     plan:
     - do:
-      - { get: git-pull-requests, trigger: true, version: every }
-      - { get: image }
+      - in_parallel:
+          - { get: git-pull-requests, trigger: true, version: every }
+          - { get: image }
       - put: git-pull-requests
         params:
           path: git-pull-requests
-          status: pending
+          status: PENDING
       - task: testflight
         image: image
         config:
@@ -163,12 +165,12 @@ jobs:
           put: git-pull-requests
           params:
             path: git-pull-requests
-            status: success
+            status: SUCCESS
         on_failure:
           put: git-pull-requests
           params:
             path: git-pull-requests
-            status: failure
+            status: FAILURE
       - task: pr-success-message
         image: image
         config:
@@ -199,13 +201,10 @@ jobs:
     serial: true
     plan:
     - do:
-      - get: git
-        passed:
-        - testflight
-        trigger: true
-      - get: version
-        trigger: true
-      - { get: image, passed: [testflight] }
+      - in_parallel:
+          - { get: git,     trigger: true, passed: [ testflight ] }
+          - { get: version, trigger: true }
+          - { get: image,                  passed: [ testflight ] }
       - task: release-notes
         image: image
         config:
@@ -246,9 +245,10 @@ jobs:
     serial: true
     plan:
     - do:
-      - { get: git,     trigger: true,  passed: [pre] }
-      - { get: version, trigger: false, params: {pre: rc} }
-      - { get: image,                   passed: [pre] }
+      - in_parallel:
+          - { get: git,     trigger: true,  passed: [pre] }
+          - { get: version, trigger: false, params: {pre: rc} }
+          - { get: image,                   passed: [pre] }
       - task: release-notes
         image: image
         config:
@@ -331,9 +331,10 @@ jobs:
     serial: true
     plan:
     - do:
-      - { get: version, passed: [rc], params: {bump: final} }
-      - { get: git,     passed: [rc] }
-      - { get: image,   passed: [rc] }
+      - in_parallel:
+          - { get: version, passed: [rc], params: {bump: final} }
+          - { get: git,     passed: [rc] }
+          - { get: image,   passed: [rc] }
       - task: release
         image: image
         config:
@@ -352,6 +353,7 @@ jobs:
             REPO_ROOT:    git
             VERSION_FROM: version/number
             RELEASE_ROOT: gh
+            GH_RELEASE_NAME: (( grab meta.release ))
             REPO_OUT:     pushme
             NOTIFICATION_OUT: notifications
             BRANCH:        (( grab meta.github.branch ))
@@ -395,12 +397,12 @@ jobs:
   - name: compile-release
     old_name: compile-release-456
     plan:
-      - get: git
-      - get: github
-        trigger: true
-      - get: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
-        params: {tarball: false}
-      - { get: image }
+      - in_parallel:
+          - { get: git }
+          - { get: github, trigger: true }
+          - get: (( concat meta.bosh.stemcell.os "-stemcell-" meta.bosh.stemcell.major ))
+            params: { tarball: false }
+          - { get: image }
       - task: export-release
         image: image
         config:
@@ -477,7 +479,7 @@ resource_types:
   - name: pull-request
     type: docker-image
     source:
-      repository: jtarchie/pr
+      repository: teliaoss/github-pr-resource
 
 resources:
   - name: image
@@ -497,12 +499,10 @@ resources:
 
   - name: git-pull-requests
     type: pull-request
-    check_every: 15m # Required due to API throttling.
     source:
       access_token: (( grab meta.github.access_token ))
-      private_key:  (( grab meta.github.private_key ))
-      repo:         (( concat meta.github.owner "/" meta.github.repo ))
-      base:         (( grab meta.github.branch ))
+      repository:   (( concat meta.github.owner "/" meta.github.repo ))
+      base_branch:  (( grab meta.github.branch ))
 
   - name: version
     type: semver
