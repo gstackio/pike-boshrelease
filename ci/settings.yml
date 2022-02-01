@@ -11,7 +11,7 @@ meta:
   initial_version: 1.0.0
 
   manifest:
-    path: manifests/pike-full-deploy.yml
+    path: manifests/pike-os-tests.yml
     directory: manifests
 
   git:

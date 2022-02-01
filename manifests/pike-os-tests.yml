@@ -1,4 +1,4 @@
-name: pike-full-deploy
+name: pike-os-tests
 
 stemcells:
 - alias: xenial
