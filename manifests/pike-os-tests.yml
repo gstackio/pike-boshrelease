@@ -1,42 +1,44 @@
 name: pike-os-tests
 
 stemcells:
-- alias: xenial
-  os: ubuntu-xenial
-  version: latest
-- alias: bionic
-  os: ubuntu-bionic
-  version: latest
+  - alias: xenial
+    os: ubuntu-xenial
+    version: latest
+  - alias: bionic
+    os: ubuntu-bionic
+    version: latest
 
 releases:
-- name: pike
-  version: latest
+  - name: pike
+    version: latest
 
 instance_groups:
-- name: xenial
-  azs: [ z1 ]
-  instances: 1
-  jobs:
-  - name: pike-7.8-test
-    release: pike
-  - name: pike-8.0-test
-    release: pike
-  vm_type: default
-  stemcell: xenial
-  networks: [ name: default ]
-- name: bionic
-  azs: [ z1 ]
-  instances: 1
-  jobs:
-  - name: pike-7.8-test
-    release: pike
-  - name: pike-8.0-test
-    release: pike
-  vm_type: default
-  stemcell: bionic
-  networks: [ name: default ]
+  - name: xenial
+    azs: [ z1 ]
+    instances: 1
+    jobs:
+      - name: pike-7.8-test
+        release: pike
+      - name: pike-8.0-test
+        release: pike
+    vm_type: default
+    stemcell: xenial
+    networks: [ name: default ]
+
+  - name: bionic
+    azs: [ z1 ]
+    instances: 1
+    jobs:
+      - name: pike-7.8-test
+        release: pike
+      - name: pike-8.0-test
+        release: pike
+    vm_type: default
+    stemcell: bionic
+    networks: [ name: default ]
 
 update:
+  serial: false
   canaries: 1
   max_in_flight: 1
   canary_watch_time: 1000-5000
