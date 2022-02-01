@@ -46,6 +46,7 @@ meta:
 resources:
 
   - name: version
+    icon: github
     source:
       bucket:            (( prune ))
       region_name:       (( prune ))
