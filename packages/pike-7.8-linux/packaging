@@ -15,17 +15,18 @@ function _workaround_missing_libraries() {
   # See: https://github.com/cloudfoundry/bosh-linux-stemcell-builder/issues/39#issuecomment-418136627
   apt-get --option APT::Sandbox::User="root" update
 
-  apt-get --assume-yes install libgmp10 nettle-dev libpcre3-dev
+  apt-get --assume-yes install "libgmp10" "nettle-dev" "libpcre3-dev"
 }
 
 # Warning : pushd / popd aren't POSIX
 function _compile_install(){
-  tar xzf Pike-v${PIKE_VERSION}.tar.gz
-  pushd Pike-v${PIKE_VERSION}
-  make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
-  make install
+  tar -xf "Pike-v${PIKE_VERSION}.tar.gz"
+  pushd "Pike-v${PIKE_VERSION}"
+    make CONFIGUREARGS="--prefix=$BOSH_INSTALL_TARGET"
+    make install
   popd
+  mkdir "${BOSH_INSTALL_TARGET}/bosh"
+  cp -v runtime-7.8-linux.env "${BOSH_INSTALL_TARGET}/bosh/runtime.env"
 }
 
 main "$@"
-
