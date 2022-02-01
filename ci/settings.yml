@@ -12,7 +12,6 @@ meta:
 
   manifest:
     path: manifests/pike-os-tests.yml
-    directory: manifests
 
   git:
     email:  ((git-commit-email))
@@ -39,11 +38,8 @@ meta:
 
   slack:
     webhook:       ((slack-webhook))
-    username:      ((slack-username))
-    icon:          ((slack-icon-url))
     channel:       "#oss-pipelines-notifications"
-    blob_success:  '(( concat ": New version of  was detected, and updated in master. <" meta.url "/teams//pipelines/| Cut a new release?>" ))'
-    blob_failure:  '(( concat ": :airplane_arriving: <" meta.url "/teams//pipelines//jobs//builds/| Failed to update the blob for >" ))'
+    username:      ((slack-username))
 
 
 
