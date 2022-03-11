@@ -17,6 +17,8 @@ instance_groups:
     jobs:
       - name: pike-8.0-test
         release: pike
+      - name: pike-8.0-features
+        release: pike
     vm_type: default
     stemcell: bionic
     networks: [ name: default ]

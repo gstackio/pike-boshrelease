@@ -24,6 +24,8 @@ instance_groups:
         release: pike
       - name: pike-8.0-test
         release: pike
+      - name: pike-8.0-features
+        release: pike
     vm_type: default
     stemcell: xenial
     networks: [ name: default ]
@@ -35,6 +37,8 @@ instance_groups:
       - name: pike-7.8-test
         release: pike
       - name: pike-8.0-test
+        release: pike
+      - name: pike-8.0-features
         release: pike
     vm_type: default
     stemcell: bionic
