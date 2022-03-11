@@ -1,0 +1,8 @@
+---
+name: pike-8.0-features
+
+templates: { bin/run.sh: bin/run }
+
+packages: [ pike-8.0-linux ]
+
+properties: {}
