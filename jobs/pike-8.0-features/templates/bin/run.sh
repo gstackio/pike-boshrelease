@@ -2,4 +2,4 @@
 
 set -e
  
-/var/vcap/packages/pike-8.0-linux/bin/pike -x features > features.txt
+/var/vcap/packages/pike-8.0-linux/bin/pike -x features | tee features.txt
