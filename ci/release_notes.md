@@ -5,6 +5,6 @@ See [Pike 8.0.1738 Release Notes](https://pike.lysator.liu.se/download/notes/8.0
 ### Features
 
 * Pike 8 bumped to 8.0.1738
-* Pike 8 now list enabled features
+* Pike 7.8 and 8.0 now output enabled features
 
 ### Fixes
