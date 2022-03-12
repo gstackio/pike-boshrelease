@@ -7,9 +7,9 @@ stemcells:
   - alias: bionic
     os: ubuntu-bionic
     version: latest
-  # - alias: jammy
-  #   os: ubuntu-jammy
-  #   version: latest
+  - alias: jammy
+    os: ubuntu-jammy
+    version: latest
 
 releases:
   - name: pike
@@ -48,17 +48,21 @@ instance_groups:
     stemcell: bionic
     networks: [ name: default ]
 
-  # - name: jammy
-  #   azs: [ z1 ]
-  #   instances: 1
-  #   jobs:
-  #     - name: pike-7.8-test
-  #       release: pike
-  #     - name: pike-8.0-test
-  #       release: pike
-  #   vm_type: default
-  #   stemcell: jammy
-  #   networks: [ name: default ]
+  - name: jammy
+    azs: [ z1 ]
+    instances: 1
+    jobs:
+      - name: pike-7.8-test
+        release: pike
+      - name: pike-7.8-features
+        release: pike
+      - name: pike-8.0-test
+        release: pike
+      - name: pike-8.0-features
+        release: pike
+    vm_type: default
+    stemcell: jammy
+    networks: [ name: default ]
 
 update:
   serial: false
