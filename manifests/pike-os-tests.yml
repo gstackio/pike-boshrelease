@@ -22,6 +22,8 @@ instance_groups:
     jobs:
       - name: pike-7.8-test
         release: pike
+      - name: pike-7.8-features
+        release: pike
       - name: pike-8.0-test
         release: pike
       - name: pike-8.0-features
@@ -35,6 +37,8 @@ instance_groups:
     instances: 1
     jobs:
       - name: pike-7.8-test
+        release: pike
+      - name: pike-7.8-features
         release: pike
       - name: pike-8.0-test
         release: pike
